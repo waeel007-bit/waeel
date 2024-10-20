@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Chat</title>
+    <style>
+        #messages {
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="messages"></div>
+    <input id="messageInput" type="text" placeholder="Type a message..."/>
+    <button id="sendButton">Send</button>
+
+    <script>
+        const messages = document.getElementById('messages');
+        const input = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        const socket = new WebSocket('ws://localhost:8080/ws');
+
+        socket.onmessage = function(event) {
+            const msg = document.createElement('div');
+            msg.textContent = event.data;
+            messages.appendChild(msg);
+            messages.scrollTop = messages.scrollHeight;
+        };
+
+        sendButton.onclick = function() {
+            const msg = input.value;
+            socket.send(msg);
+            input.value = '';
+        };
+    </script>
+</body>
+</html>
